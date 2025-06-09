@@ -75,4 +75,4 @@ O **Ecomov** é uma aplicação baseada em microsserviços, desenvolvida em **Ja
 -Repository: interface de persistência usando Spring Data JPA.
 
 ###📊 Swagger/OpenAPI
--http://localhost:8080/swagger-ui.html
+-ocalhost:8080/ecomov/swagger-ui.html
