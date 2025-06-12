@@ -25,7 +25,7 @@ public class EcomovApplication implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        // Para popular apenas quando necessário
+       
         csvLeitorService.carregarBairros();
         csvLeitorService.carregarConexoes();
         csvLeitorService.carregarPontosColeta();
