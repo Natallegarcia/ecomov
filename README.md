@@ -11,7 +11,7 @@ O **Ecomov** é uma aplicação baseada em microsserviços, desenvolvida em **Ja
 - Cadastro de caminhões e suas capacidades.
 - Criação e validação de rotas de coleta.
 - Agendamento de itinerários mensais e diários.
-- Autenticação de usuários com diferentes perfis de acesso.
+- Autenticação de usuários.
 - Visualização das rotas com distância total.
 
 ---
