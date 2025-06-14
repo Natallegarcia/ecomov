@@ -1,6 +1,8 @@
 package com.abelix.service;
 
+
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,17 +14,11 @@ import com.abelix.repository.RotaRepository;
 public class RotaService {
 
     @Autowired
-    private RotaRepository rotaRepository;
+    private RotaRepository  rotaRepository;
 
-    // Método usado diretamente com a entidade pronta (por exemplo, vindo do @RequestBody)
+  
     public Rota salvarRota(Rota rota) {
         return rotaRepository.save(rota);
-    }
-
-    // ✅ Novo método sugerido: criação de rota com parâmetros simples
-    public Rota criarRota(String caminhaoId, List<String> bairrosVisitados, double distanciaTotal, List<String> tiposResiduos) {
-        Rota novaRota = new Rota(caminhaoId, bairrosVisitados, distanciaTotal, tiposResiduos);
-        return rotaRepository.save(novaRota);
     }
 
     public List<Rota> listarTodas() {
@@ -30,6 +26,37 @@ public class RotaService {
     }
 
     public Rota buscarPorId(Long id) {
-        return rotaRepository.findById(id).orElse(null);
+        Optional<Rota> rotaOptional = rotaRepository.findById(id);
+        if (rotaOptional.isPresent()) {
+            return rotaOptional.get();
+        } else {
+            throw new RuntimeException("Rota não encontrada com ID: " + id);
+        }
+    }
+
+    public Rota atualizarRota(Long id, Rota novaRota) {
+        Optional<Rota> rotaExistenteOpt = rotaRepository.findById(id);
+
+        if (rotaExistenteOpt.isPresent()) {
+            Rota rotaExistente = rotaExistenteOpt.get();
+
+            // Atualizando os campos 
+            rotaExistente.setCaminhaoId(novaRota.getCaminhaoId());
+            rotaExistente.setBairrosVisitados(novaRota.getBairrosVisitados());
+            rotaExistente.setDistanciaTotal(novaRota.getDistanciaTotal());
+            rotaExistente.setTiposResiduos(novaRota.getTiposResiduos());
+
+            // Salvando no banco
+            return rotaRepository.save(rotaExistente);
+        } else {
+            throw new RuntimeException("Rota com ID " + id + " não encontrada.");
+        }
+    }
+
+    // Deletar rota
+    public void deletarRota(Long id) {
+        Rota rota = rotaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Rota não encontrada com ID: " + id));
+        rotaRepository.delete(rota);
     }
 }

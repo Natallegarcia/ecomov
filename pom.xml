@@ -42,7 +42,7 @@
 		<dependency>
     		<groupId>org.springdoc</groupId>
     		<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-    		<version>2.1.0</version>
+    	<version>2.1.0</version>
 		</dependency>
 		<dependency>
 			<groupId>org.postgresql</groupId>
@@ -54,6 +54,8 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+		
+		
 	</dependencies>
 
 	<build>
@@ -64,5 +66,6 @@
 			</plugin>
 		</plugins>
 	</build>
+	
 
 </project>

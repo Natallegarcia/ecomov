@@ -7,9 +7,11 @@ import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -50,7 +52,7 @@ public class RotaController {
         return "API de Rotas de Coleta Seletiva - Ecoville está no ar!";
     }
     
-    // ✅ 1. Caminho mínimo: apenas os nomes dos bairro
+    //  Caminho mínimo: apenas os nomes dos bairro
     @GetMapping("/caminho")
     public ResponseEntity<List<String>> calcularCaminhoMaisCurto(
             @RequestParam String origem,
@@ -99,7 +101,7 @@ public class RotaController {
             return ResponseEntity.ok(resposta);
 
         } catch (Exception e) {
-            // Retorna erro genérico com mensagem útil
+            
             Map<String, Object> erro = new LinkedHashMap<>();
             erro.put("mensagem", "Erro ao calcular caminho completo.");
             erro.put("detalhes", e.getMessage());
@@ -107,16 +109,7 @@ public class RotaController {
         }
     }
     
-        //gerar uma nova rota 
-    @PostMapping("/gerar")
-    public Rota gerarRotaViaParametros(
-            @RequestParam String caminhaoId,
-            @RequestParam List<String> bairrosVisitados,
-            @RequestParam double distanciaTotal,
-            @RequestParam List<String> tiposResiduos) {
-
-        return rotaService.criarRota(caminhaoId, bairrosVisitados, distanciaTotal, tiposResiduos);
-    }
+    
     
     @PostMapping("/caminho-completo")
     public ResponseEntity<?> calcularCaminhoComDistanciaPost(@RequestBody CaminhoRequest request) {
@@ -140,6 +133,18 @@ public class RotaController {
         resposta.put("distanciaKm", distancia);
 
         return ResponseEntity.ok(resposta);
+    }
+    
+    @PutMapping("/{id}")
+    public Rota atualizarRota(@PathVariable Long id, @RequestBody Rota rota) {
+        Rota rotaAtualizada = rotaService.atualizarRota(id, rota);
+        return rotaAtualizada;
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deletarRota(@PathVariable Long id) {
+        rotaService.deletarRota(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

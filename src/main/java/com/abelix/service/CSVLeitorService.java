@@ -125,7 +125,7 @@ public class CSVLeitorService {
                     ponto.setEndereco(partes[6].trim());
                     ponto.setHorarioFuncionamento(partes[7].trim());
 
-                    // Corrigido: CSV separa resíduos por vírgula (e pode estar entre aspas)
+                    //  CSV separa resíduos por vírgula 
                     String[] residuos = partes[8].split(",");
                     List<String> tiposResiduo = new ArrayList<>();
                     for (String r : residuos) {
@@ -141,7 +141,7 @@ public class CSVLeitorService {
         }
     }
 
-    // Utilitário para tratar campos CSV com vírgulas entre aspas
+    //tratar campos CSV com vírgulas entre aspas
     private String[] parseLinhaCSV(String linha) {
         List<String> valores = new ArrayList<>();
         StringBuilder valorAtual = new StringBuilder();
