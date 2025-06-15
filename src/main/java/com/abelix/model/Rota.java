@@ -32,6 +32,9 @@ public class Rota {
 
     @Column(nullable = false)
     private double distanciaTotal;
+    
+    @Column
+    private Double pesoEstimado;
 
     @ElementCollection
     @CollectionTable(name = "rota_residuos", joinColumns = @JoinColumn(name = "rota_id"))
@@ -40,11 +43,12 @@ public class Rota {
 
     public Rota() {}
 
-    public Rota(String caminhaoId, List<String> bairrosVisitados, double distanciaTotal, List<String> tiposResiduos) {
+    public Rota(String caminhaoId, List<String> bairrosVisitados, double distanciaTotal, double pesoEstimado, List<String> tiposResiduos) {
         this.caminhaoId = caminhaoId;
         this.bairrosVisitados = bairrosVisitados;
         this.distanciaTotal = distanciaTotal;
         this.tiposResiduos = tiposResiduos;
+        this.pesoEstimado = pesoEstimado; 
     }
 
     public Long getId() { return id; }
@@ -52,8 +56,14 @@ public class Rota {
     public List<String> getBairrosVisitados() { return bairrosVisitados; }
     public double getDistanciaTotal() { return distanciaTotal; }
     public List<String> getTiposResiduos() { return tiposResiduos; }
+    
+    
 
-    public void setId(Long id) { this.id = id; }
+
+    public Double getPesoEstimado() { return pesoEstimado; }
+    public void setPesoEstimado(Double pesoEstimado) { this.pesoEstimado = pesoEstimado; }
+
+	public void setId(Long id) { this.id = id; }
     public void setCaminhaoId(String caminhaoId) { this.caminhaoId = caminhaoId; }
     public void setBairrosVisitados(List<String> bairrosVisitados) { this.bairrosVisitados = bairrosVisitados; }
     public void setDistanciaTotal(double distanciaTotal) { this.distanciaTotal = distanciaTotal; }
