@@ -70,5 +70,22 @@ public class UsuarioController {
     	
     }
     
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+        Optional<UsuarioModel> optUsuario = repository.findByLogin(loginRequest.getLogin());
+
+        if (optUsuario.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Usuário não encontrado");
+        }
+
+        UsuarioModel usuario = optUsuario.get();
+
+        if (encoder.matches(loginRequest.getPassword(), usuario.getPassword())) {
+            return ResponseEntity.ok("Login bem-sucedido");
+        } else {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Senha incorreta");
+        }
+    }
+    
     
 }
