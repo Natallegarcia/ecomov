@@ -30,7 +30,7 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/usuario/salvar", "/usuario/login").permitAll() // Rotas públicas
-                .anyRequest().authenticated() // Aqui estou solicitando autenticação em todas as ouras rotas
+                .anyRequest().authenticated()  //Solicita a  autenticação em todas as outras rotas
             )
             .httpBasic(httpBasic -> httpBasic
                 .realmName("YourAppRealm")

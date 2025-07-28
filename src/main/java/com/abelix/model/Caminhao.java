@@ -2,7 +2,9 @@ package com.abelix.model;
 
 import java.util.Set;
 
+
 import com.abelix.commons.TipoResiduo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
@@ -12,6 +14,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 
 @Entity
 public class Caminhao {

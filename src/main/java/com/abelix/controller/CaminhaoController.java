@@ -5,6 +5,7 @@ package com.abelix.controller;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,7 +17,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.abelix.model.Caminhao;
+import com.abelix.model.Rota;
 import com.abelix.repository.CaminhaoRepository;
+
+import jakarta.validation.Valid;
 
 
 @RestController
@@ -32,6 +36,12 @@ public class CaminhaoController {
     @GetMapping
     public List<Caminhao> listar() {
         return repository.findAll();
+    }
+  
+	@GetMapping("/{id}")
+    public Caminhao buscarPorId(@PathVariable Long id) {
+        return repository.findById(id)
+        		.orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Caminhão não encontrado"));
     }
 
     @PostMapping
@@ -54,5 +64,7 @@ public class CaminhaoController {
         }
         repository.deleteById(id);
     }
+    
+    
 
 }

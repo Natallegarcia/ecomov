@@ -91,10 +91,10 @@ public class ItinerarioService {
         List<ItinerarioCalendarioDTO> resultado = new ArrayList<>();
 
         for (LocalDate dia = inicio; !dia.isAfter(fim); dia = dia.plusDays(1)) {
-            final LocalDate diaAtual = dia;  // <<< Aqui criamos uma cópia final
+            final LocalDate diaAtual = dia;  
 
             List<String> rotasDoDia = itinerarios.stream()
-                    .filter(i -> i.getDataColeta().equals(diaAtual))  // Usamos a cópia final
+                    .filter(i -> i.getDataColeta().equals(diaAtual))  
                     .map(i -> "Rota ID: " + i.getRotaId())
                     .collect(Collectors.toList());
 
@@ -103,4 +103,6 @@ public class ItinerarioService {
 
         return resultado;
     }
+    
+    
 }
