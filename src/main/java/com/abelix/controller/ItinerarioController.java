@@ -1,10 +1,12 @@
 package com.abelix.controller;
 
 import java.time.LocalDate;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,13 +22,15 @@ public class ItinerarioController {
     private ItinerarioService itinerarioService;
 
     // Criar novo itinerário
-    @PostMapping("novoItinerario")
-    public ResponseEntity<Itinerario> criar(@RequestBody Itinerario itinerario) {
+    @PostMapping("/novoItinerario")
+    public ResponseEntity<?> criar(@RequestBody Itinerario itinerario) {
         try {
             Itinerario novo = itinerarioService.criarItinerario(itinerario);
-            return ResponseEntity.ok(novo);
+            return ResponseEntity.status(HttpStatus.CREATED).body(novo);
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(null);
+            return ResponseEntity
+                     .badRequest()
+                     .body(Collections.singletonMap("erro", e.getMessage()));
         }
     }
 

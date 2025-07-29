@@ -8,15 +8,19 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.abelix.DTO.ItinerarioCalendarioDTO;
+import com.abelix.commons.TipoResiduo;
 import com.abelix.model.Caminhao;
 import com.abelix.model.Itinerario;
 import com.abelix.model.Rota;
 import com.abelix.repository.CaminhaoRepository;
 import com.abelix.repository.ItinerarioRepository;
 import com.abelix.repository.RotaRepository;
+import com.abelix.service.RotaService;
 
 @Service
 public class ItinerarioService {
@@ -26,6 +30,9 @@ public class ItinerarioService {
 
     @Autowired
     private CaminhaoRepository caminhaoRepository;
+    
+    @Autowired
+    private RotaService rotaService;
 
     @Autowired
     private RotaRepository rotaRepository;
@@ -41,7 +48,7 @@ public class ItinerarioService {
     public void excluir(Long id) throws Exception {
         if (!itinerarioRepository.existsById(id)) {
             throw new Exception("Itinerário não encontrado.");
-        }
+        } 
         itinerarioRepository.deleteById(id);
     }
 
@@ -60,26 +67,54 @@ public class ItinerarioService {
         return itinerarioRepository.findByDataColeta(dataColeta);
     }
 
-    public Itinerario criarItinerario(Itinerario itinerario) throws Exception {
+    public Itinerario criarItinerario(Itinerario itinerario) {
+        // Verifica se já existe itinerário para o caminhão na mesma data
         List<Itinerario> existentes = itinerarioRepository.findByCaminhaoIdAndDataColeta(
                 itinerario.getCaminhaoId(), itinerario.getDataColeta());
 
         if (!existentes.isEmpty()) {
-            throw new Exception("Já existe um itinerário para este caminhão nesta data.");
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Já existe um itinerário para este caminhão nesta data.");
         }
 
-        Optional<Caminhao> caminhaoOpt = caminhaoRepository.findById(itinerario.getCaminhaoId());
-        if (caminhaoOpt.isEmpty()) {
-            throw new Exception("Caminhão não encontrado.");
+        // Busca caminhão no banco
+        Caminhao caminhao = caminhaoRepository.findById(itinerario.getCaminhaoId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Caminhão não encontrado."));
+
+        // Busca rota no banco
+        Rota rota = rotaRepository.findById(itinerario.getRotaId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Rota não encontrada."));
+
+        // Valida peso estimado da rota
+        Double pesoEstimado = rota.getPesoEstimado();
+        if (pesoEstimado == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "O peso estimado da rota deve ser informado e maior que zero.");
+        }
+        if (pesoEstimado <= 0) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "O peso estimado da rota deve ser maior que zero.");
         }
 
-        Optional<Rota> rotaOpt = rotaRepository.findById(itinerario.getRotaId());
-        if (rotaOpt.isEmpty()) {
-            throw new Exception("Rota não encontrada.");
+        // Verifica se o caminhão suporta o peso da rota
+        if (pesoEstimado > caminhao.getCapacidadeCarga()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "A carga da rota excede a capacidade do caminhão.");
         }
 
+        // Verifica se o caminhão suporta todos os tipos de resíduos da rota
+        for (String tipoStr : rota.getTiposResiduos()) {
+            TipoResiduo tipo = TipoResiduo.valueOf(tipoStr);
+            if (!caminhao.getTiposResiduos().contains(tipo)) {
+                throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                        "O caminhão não é compatível com o tipo de resíduo: " + tipo);
+            }
+        }
+
+        // Salva e retorna o itinerário
         return itinerarioRepository.save(itinerario);
     }
+
 
     public List<ItinerarioCalendarioDTO> listarItinerariosPorCaminhaoNoMes(Long caminhaoId, int ano, int mes) {
         YearMonth anoMes = YearMonth.of(ano, mes);
